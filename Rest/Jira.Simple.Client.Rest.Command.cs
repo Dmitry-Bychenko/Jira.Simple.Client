@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Jira.Simple.Client.Rest {
-  
+
   //-------------------------------------------------------------------------------------------------------------------
   //
   /// <summary>
@@ -33,7 +33,7 @@ namespace Jira.Simple.Client.Rest {
     /// Standard Constructor
     /// </summary>
     public JiraRestCommand(JiraRestConnection connection) {
-      Connection = 
+      Connection =
           connection is null ? throw new ArgumentNullException(nameof(connection))
         : connection.IsDisposed ? throw new ObjectDisposedException(nameof(connection))
         : connection;
@@ -46,7 +46,7 @@ namespace Jira.Simple.Client.Rest {
     /// <summary>
     /// Connection
     /// </summary>
-    public JiraRestConnection Connection { get; } 
+    public JiraRestConnection Connection { get; }
 
     /// <summary>
     /// Connection

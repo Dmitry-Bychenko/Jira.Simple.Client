@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Jira.Simple.Client {
-  
+
   //-------------------------------------------------------------------------------------------------------------------
   //
   /// <summary>

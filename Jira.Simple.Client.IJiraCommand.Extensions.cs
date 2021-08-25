@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,7 +34,7 @@ namespace Jira.Simple.Client {
                                                            HttpMethod method) =>
       await (command ?? throw new ArgumentNullException(nameof(command)))
         .QueryAsync(address, query, method, CancellationToken.None).ConfigureAwait(false);
-    
+
     /// <summary>
     /// Query
     /// </summary>
@@ -46,9 +42,9 @@ namespace Jira.Simple.Client {
     /// <param name="query">Query (json)</param>
     /// <param name="token">Cancellation Token</param>
     /// <returns>Answer Root Element (JSON)</returns>
-    public static async Task<JsonDocument> QueryAsync(this IJiraCommand command, 
-                                                           string address, 
-                                                           string query, 
+    public static async Task<JsonDocument> QueryAsync(this IJiraCommand command,
+                                                           string address,
+                                                           string query,
                                                            CancellationToken token) =>
        await (string.IsNullOrWhiteSpace(query)
         ? (command ?? throw new ArgumentNullException(nameof(command)))
@@ -62,8 +58,8 @@ namespace Jira.Simple.Client {
     /// <param name="address">Address</param>
     /// <param name="query">Query (json)</param>
     /// <returns>Answer Root Element (JSON)</returns>
-    public static async Task<JsonDocument> QueryAsync(this IJiraCommand command, 
-                                                           string address, 
+    public static async Task<JsonDocument> QueryAsync(this IJiraCommand command,
+                                                           string address,
                                                            string query) =>
       await (string.IsNullOrWhiteSpace(query)
         ? (command ?? throw new ArgumentNullException(nameof(command)))
@@ -77,8 +73,8 @@ namespace Jira.Simple.Client {
     /// <param name="address">Address</param>
     /// <param name="token">Cancellation Token</param>
     /// <returns>Answer Root Element (JSON)</returns>
-    public static async Task<JsonDocument> QueryAsync(this IJiraCommand command, 
-                                                           string address, 
+    public static async Task<JsonDocument> QueryAsync(this IJiraCommand command,
+                                                           string address,
                                                            CancellationToken token) =>
       await (command ?? throw new ArgumentNullException(nameof(command)))
                .QueryAsync(address, "", HttpMethod.Get, token).ConfigureAwait(false);
@@ -108,7 +104,7 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
-    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command, 
+    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
                                                                             HttpMethod method,
@@ -120,7 +116,7 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
-    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command, 
+    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
                                                                             HttpMethod method) {
@@ -131,7 +127,7 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
-    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command, 
+    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
                                                                             int pageSize,
@@ -139,7 +135,7 @@ namespace Jira.Simple.Client {
                                                                             CancellationToken token) {
       if (command is null)
         throw new ArgumentNullException(nameof(command));
-      
+
       HttpMethod method = HttpMethod.Post;
 
       if (string.IsNullOrWhiteSpace(query)) {
@@ -152,7 +148,7 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
-    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command, 
+    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
                                                                            [EnumeratorCancellation]
@@ -172,7 +168,7 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
-    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command, 
+    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
                                                                             int pageSize) {
@@ -209,7 +205,7 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
-    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command, 
+    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             int pageSize,
                                                                            [EnumeratorCancellation]
@@ -221,7 +217,7 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
-    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command, 
+    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                            [EnumeratorCancellation]
                                                                             CancellationToken token) {
@@ -232,7 +228,7 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
-    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command, 
+    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             int pageSize) {
       if (command is null)
@@ -242,7 +238,7 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
-    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command, 
+    public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address) {
       if (command is null)
         throw new ArgumentNullException(nameof(command));

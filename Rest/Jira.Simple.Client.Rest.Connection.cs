@@ -191,7 +191,7 @@ namespace Jira.Simple.Client.Rest {
     /// <summary>
     /// Create Command
     /// </summary>
-    public JiraRestCommand Command() => new (this);
+    public JiraRestCommand Command() => new(this);
 
     /// <summary>
     /// Create Command
@@ -221,7 +221,7 @@ namespace Jira.Simple.Client.Rest {
         m_HttpClient.Dispose();
 
         IsConnected = false;
-        IsDisposed = true;        
+        IsDisposed = true;
       }
     }
 

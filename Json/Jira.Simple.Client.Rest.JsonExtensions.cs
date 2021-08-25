@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 
 namespace Jira.Simple.Client.Json {
-  
+
   //-------------------------------------------------------------------------------------------------------------------
   //
   /// <summary>
@@ -34,10 +34,10 @@ namespace Jira.Simple.Client.Json {
 
       JsonElement result = parent;
 
-      foreach (string name in childrenNames) 
+      foreach (string name in childrenNames)
         if (!parent.TryGetProperty(name, out result))
           return NullElement;
-      
+
       return result;
     }
 
@@ -91,7 +91,7 @@ namespace Jira.Simple.Client.Json {
 
       return null;
     }
-        
+
     /// <summary>
     /// Sbyte Or Null
     /// </summary>
