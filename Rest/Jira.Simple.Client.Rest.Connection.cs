@@ -8,16 +8,17 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Jira.Simple.Client.Rest {
-  
+
   //-------------------------------------------------------------------------------------------------------------------
   //
   /// <summary>
   /// Jira Rest Connection
+  /// JiraRestConnection is intended to be instantiated once per application, rather than per-use
   /// </summary>
   //
   //-------------------------------------------------------------------------------------------------------------------
 
-  public sealed class JiraRestConnection : IDisposable, IEquatable<JiraRestConnection> {
+  public sealed class JiraRestConnection : IJiraConnection, IDisposable, IEquatable<JiraRestConnection> {
     #region Private Data
 
     private static readonly IReadOnlyDictionary<char, string> s_Escape = new Dictionary<char, string>() {
@@ -188,9 +189,14 @@ namespace Jira.Simple.Client.Rest {
     }
 
     /// <summary>
-    /// Connect Async
+    /// Create Command
     /// </summary>
-    public async Task ConnectAsync() => await ConnectAsync(CancellationToken.None);
+    public JiraRestCommand Command() => new (this);
+
+    /// <summary>
+    /// Create Command
+    /// </summary>
+    IJiraCommand IJiraConnection.Command() => new JiraRestCommand(this);
 
     /// <summary>
     /// To String

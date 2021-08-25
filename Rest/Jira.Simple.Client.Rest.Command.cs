@@ -20,7 +20,7 @@ namespace Jira.Simple.Client.Rest {
   //
   //-------------------------------------------------------------------------------------------------------------------
 
-  public sealed class JiraRestCommand {
+  public sealed class JiraRestCommand : IJiraCommand {
     #region Constants
 
     public const int DEFAULT_PAGE_SIZE = 500;
@@ -46,9 +46,12 @@ namespace Jira.Simple.Client.Rest {
     /// <summary>
     /// Connection
     /// </summary>
-    public JiraRestConnection Connection { get; }
+    public JiraRestConnection Connection { get; } 
 
-    #region Query
+    /// <summary>
+    /// Connection
+    /// </summary>
+    IJiraConnection IJiraCommand.Connection => Connection;
 
     /// <summary>
     /// Query
@@ -100,59 +103,6 @@ namespace Jira.Simple.Client.Rest {
 
       return document;
     }
-
-    /// <summary>
-    /// Query
-    /// </summary>
-    /// <param name="address">Address</param>
-    /// <param name="query">Query (json)</param>
-    /// <param name="method">Http Method</param>
-    /// <returns>Answer Root Element (JSON)</returns>
-    public async Task<JsonDocument> QueryAsync(string address, string query, HttpMethod method) =>
-      await QueryAsync(address, query, method, CancellationToken.None).ConfigureAwait(false);
-
-    /// <summary>
-    /// Query
-    /// </summary>
-    /// <param name="address">Address</param>
-    /// <param name="query">Query (json)</param>
-    /// <param name="token">Cancellation Token</param>
-    /// <returns>Answer Root Element (JSON)</returns>
-    public async Task<JsonDocument> QueryAsync(string address, string query, CancellationToken token) =>
-       await (string.IsNullOrWhiteSpace(query)
-        ? QueryAsync(address, null, HttpMethod.Get, token).ConfigureAwait(false)
-        : QueryAsync(address, query, HttpMethod.Post, token).ConfigureAwait(false));
-
-    /// <summary>
-    /// Query
-    /// </summary>
-    /// <param name="address">Address</param>
-    /// <param name="query">Query (json)</param>
-    /// <returns>Answer Root Element (JSON)</returns>
-    public async Task<JsonDocument> QueryAsync(string address, string query) =>
-      await (string.IsNullOrWhiteSpace(query)
-        ? QueryAsync(address, null, HttpMethod.Get, CancellationToken.None).ConfigureAwait(false)
-        : QueryAsync(address, query, HttpMethod.Post, CancellationToken.None).ConfigureAwait(false));
-
-    /// <summary>
-    /// Query
-    /// </summary>
-    /// <param name="address">Address</param>
-    /// <param name="token">Cancellation Token</param>
-    /// <returns>Answer Root Element (JSON)</returns>
-    public async Task<JsonDocument> QueryAsync(string address, CancellationToken token) =>
-      await QueryAsync(address, "", HttpMethod.Get, token).ConfigureAwait(false);
-
-    /// <summary>
-    /// Query
-    /// </summary>
-    /// <param name="address">Address</param>
-    public async Task<JsonDocument> QueryAsync(string address) =>
-      await QueryAsync(address, "", HttpMethod.Get, CancellationToken.None).ConfigureAwait(false);
-
-    #endregion Query
-
-    #region Paged Query
 
     /// <summary>
     /// Paged Query
@@ -233,120 +183,6 @@ namespace Jira.Simple.Client.Rest {
         }
       }
     }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                string query,
-                                                                HttpMethod method,
-                                                               [EnumeratorCancellation]
-                                                                CancellationToken token) {
-      await foreach (var item in QueryPagedAsync(address, query, method, DEFAULT_PAGE_SIZE, token))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                string query,
-                                                                HttpMethod method,
-                                                                int pageSize) {
-      await foreach (var item in QueryPagedAsync(address, query, method, pageSize, CancellationToken.None))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                string query,
-                                                                HttpMethod method) {
-      await foreach (var item in QueryPagedAsync(address, query, method, DEFAULT_PAGE_SIZE, CancellationToken.None))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                string query,
-                                                               int pageSize,
-                                                              [EnumeratorCancellation]
-                                                               CancellationToken token) {
-      HttpMethod method = HttpMethod.Post;
-
-      if (string.IsNullOrWhiteSpace(query)) {
-        query = "";
-
-        method = HttpMethod.Get;
-      }
-
-      await foreach (var item in QueryPagedAsync(address, query, method, pageSize, token))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                string query,
-                                                               [EnumeratorCancellation]
-                                                                CancellationToken token) {
-      HttpMethod method = HttpMethod.Post;
-
-      if (string.IsNullOrWhiteSpace(query)) {
-        query = "";
-
-        method = HttpMethod.Get;
-      }
-
-      await foreach (var item in QueryPagedAsync(address, query, method, DEFAULT_PAGE_SIZE, token))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                string query,
-                                                                int pageSize) {
-      HttpMethod method = HttpMethod.Post;
-
-      if (string.IsNullOrWhiteSpace(query)) {
-        query = "";
-
-        method = HttpMethod.Get;
-      }
-
-      await foreach (var item in QueryPagedAsync(address, query, method, pageSize, CancellationToken.None))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                string query) {
-      HttpMethod method = HttpMethod.Post;
-
-      if (string.IsNullOrWhiteSpace(query)) {
-        query = "";
-
-        method = HttpMethod.Get;
-      }
-
-      await foreach (var item in QueryPagedAsync(address, query, method, DEFAULT_PAGE_SIZE, CancellationToken.None))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                int pageSize,
-                                                               [EnumeratorCancellation]
-                                                                CancellationToken token) {
-      await foreach (var item in QueryPagedAsync(address, "", HttpMethod.Get, pageSize, token))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                               [EnumeratorCancellation]
-                                                                CancellationToken token) {
-      await foreach (var item in QueryPagedAsync(address, "", HttpMethod.Get, DEFAULT_PAGE_SIZE, token))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                int pageSize) {
-      await foreach (var item in QueryPagedAsync(address, "", HttpMethod.Get, pageSize, CancellationToken.None))
-        yield return item;
-    }
-
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address) {
-      await foreach (var item in QueryPagedAsync(address, "", HttpMethod.Get, DEFAULT_PAGE_SIZE, CancellationToken.None))
-        yield return item;
-    }
-
-    #endregion Paged Query
 
     #endregion Public
   }
