@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -13,6 +13,9 @@
     <PackageReleaseNotes>Simple Jira (Rest) Client</PackageReleaseNotes>
     <PackageIcon>Jira.Simple.Client.png</PackageIcon>
     <PackageIconUrl />
+    <Authors>Dmitry Bychenko</Authors>
+    <Company />
+    <PackageTags>Jira</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
