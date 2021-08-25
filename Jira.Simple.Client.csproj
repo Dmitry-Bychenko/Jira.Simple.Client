@@ -4,6 +4,26 @@
     <TargetFramework>net5.0</TargetFramework>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Jira.Simple.Client.snk.pfx</AssemblyOriginatorKeyFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Jira Simple (Rest) Client</Description>
+    <Copyright>Copyright (c) 2021 by Dmitry Bychenko</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</PackageProjectUrl>
+    <PackageReleaseNotes>Simple Jira (Rest) Client</PackageReleaseNotes>
+    <PackageIcon>Jira.Simple.Client.png</PackageIcon>
+    <PackageIconUrl />
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\Images\Jira.Simple.Client.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
