@@ -27,17 +27,26 @@ namespace Jira.Simple.Client.Json {
     /// Read
     /// </summary>
     /// <param name="parent">Parent Item</param>
-    /// <param name="childrenNames">Names</param>
+    /// <param name="childrenNames">Names or indexes</param>
     public static JsonElement Read(this JsonElement parent, params string[] childrenNames) {
       if (childrenNames is null)
         throw new ArgumentNullException(nameof(childrenNames));
 
       JsonElement result = parent;
 
-      foreach (string name in childrenNames)
-        if (!parent.TryGetProperty(name, out result))
+      foreach (string name in childrenNames) 
+        if (result.ValueKind == JsonValueKind.Object) {
+          if (!result.TryGetProperty(name, out result))
+            return NullElement;
+        }
+        else if (result.ValueKind == JsonValueKind.Array) 
+          if (int.TryParse(name, out int index) && index >= 0 && index < result.GetArrayLength())
+            result = result[index];
+          else
+            return NullElement;
+        else
           return NullElement;
-
+      
       return result;
     }
 
