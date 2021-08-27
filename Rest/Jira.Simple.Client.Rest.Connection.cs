@@ -119,7 +119,7 @@ namespace Jira.Simple.Client.Rest {
       Password = password ?? throw new ArgumentNullException(nameof(password));
       Server = server?.TrimEnd(' ', '/') ?? throw new ArgumentNullException(nameof(server));
 
-      m_Locker = new SemaphoreSlim(0);
+      m_Locker = new SemaphoreSlim(1);
 
       CoreCreateClient();
     }
