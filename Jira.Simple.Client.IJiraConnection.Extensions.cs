@@ -20,7 +20,8 @@ namespace Jira.Simple.Client {
     /// </summary>
     public static async Task ConnectAsync(this IJiraConnection connection) =>
       await (connection ?? throw new ArgumentNullException(nameof(connection)))
-        .ConnectAsync(CancellationToken.None);
+        .ConnectAsync(CancellationToken.None)
+        .ConfigureAwait(false);
 
     #endregion Public
   }

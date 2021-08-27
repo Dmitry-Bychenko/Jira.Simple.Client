@@ -254,11 +254,35 @@ namespace Jira.Simple.Client {
     /// <summary>
     /// Jql
     /// </summary>
-    public static async IAsyncEnumerable<JsonDocument> Jql(this IJiraCommand command,
+    public static async Task<JsonDocument> Jql(this IJiraCommand command,
                                                                 string address,
-                                                                int pageSize,
-                                                               [EnumeratorCancellation]
                                                                 CancellationToken token) {
+      if (command is null)
+        throw new ArgumentNullException(nameof(command));
+
+      if (address is null)
+        throw new ArgumentNullException(nameof(address));
+
+      address = $"search?jql={address}";
+
+      return await command.QueryAsync(address, "", HttpMethod.Get, token).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Jql
+    /// </summary>
+    public static async Task<JsonDocument> Jql(this IJiraCommand command,
+                                                                string address) =>
+      await Jql(command, address, CancellationToken.None).ConfigureAwait(false);
+
+    /// <summary>
+    /// Jql
+    /// </summary>
+    public static async IAsyncEnumerable<JsonDocument> JqlPaged(this IJiraCommand command,
+                                                                     string address,
+                                                                     int pageSize,
+                                                                    [EnumeratorCancellation]
+                                                                     CancellationToken token) {
       if (command is null)
         throw new ArgumentNullException(nameof(command));
 
@@ -274,30 +298,30 @@ namespace Jira.Simple.Client {
     /// <summary>
     /// Jql
     /// </summary>
-    public static async IAsyncEnumerable<JsonDocument> Jql(this IJiraCommand command,
-                                                                string address,
-                                                                int pageSize) {
-      await foreach (var item in Jql(command, address, pageSize, CancellationToken.None))
+    public static async IAsyncEnumerable<JsonDocument> JqlPaged(this IJiraCommand command,
+                                                                     string address,
+                                                                     int pageSize) {
+      await foreach (var item in JqlPaged(command, address, pageSize, CancellationToken.None))
         yield return item;
     }
 
     /// <summary>
     /// Jql
     /// </summary>
-    public static async IAsyncEnumerable<JsonDocument> Jql(this IJiraCommand command,
-                                                                string address,
-                                                               [EnumeratorCancellation]
-                                                                CancellationToken token) {
-      await foreach (var item in Jql(command, address, -1, token))
+    public static async IAsyncEnumerable<JsonDocument> JqlPaged(this IJiraCommand command,
+                                                                     string address,
+                                                                    [EnumeratorCancellation]
+                                                                     CancellationToken token) {
+      await foreach (var item in JqlPaged(command, address, -1, token))
         yield return item;
     }
 
     /// <summary>
     /// Jql
     /// </summary>
-    public static async IAsyncEnumerable<JsonDocument> Jql(this IJiraCommand command,
-                                                                string address) {
-      await foreach (var item in Jql(command, address, -1, CancellationToken.None))
+    public static async IAsyncEnumerable<JsonDocument> JqlPaged(this IJiraCommand command,
+                                                                     string address) {
+      await foreach (var item in JqlPaged(command, address, -1, CancellationToken.None))
         yield return item;
     }
 

@@ -191,7 +191,7 @@ namespace Jira.Simple.Client.Rest {
       if (IsConnected)
         return;
 
-      await m_Locker.WaitAsync(token);
+      await m_Locker.WaitAsync(token).ConfigureAwait(false);
 
       try {
         if (IsDisposed)

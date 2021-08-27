@@ -69,7 +69,7 @@ namespace Jira.Simple.Client.Rest {
         throw new ObjectDisposedException(nameof(Connection));
 
       if (!Connection.IsConnected)
-        await Connection.ConnectAsync();
+        await Connection.ConnectAsync().ConfigureAwait(false);
 
       address = string.Join("/", Connection.Server, "rest/api/latest", address.TrimStart('/'));
 
@@ -126,7 +126,7 @@ namespace Jira.Simple.Client.Rest {
         throw new ObjectDisposedException(nameof(Connection));
 
       if (!Connection.IsConnected)
-        await Connection.ConnectAsync();
+        await Connection.ConnectAsync().ConfigureAwait(false);
 
       pageSize = pageSize <= 0 ? DEFAULT_PAGE_SIZE : pageSize;
 
