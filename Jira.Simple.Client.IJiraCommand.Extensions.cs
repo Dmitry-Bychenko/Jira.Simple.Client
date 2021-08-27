@@ -249,6 +249,60 @@ namespace Jira.Simple.Client {
 
     #endregion Paged Query
 
+    #region Jql
+
+    /// <summary>
+    /// Jql
+    /// </summary>
+    public static async IAsyncEnumerable<JsonDocument> Jql(this IJiraCommand command,
+                                                                string address,
+                                                                int pageSize,
+                                                               [EnumeratorCancellation]
+                                                                CancellationToken token) {
+      if (command is null)
+        throw new ArgumentNullException(nameof(command));
+
+      if (address is null)
+        throw new ArgumentNullException(nameof(address));
+
+      address = $"search?jql={address}";
+
+      await foreach (var item in command.QueryPagedAsync(address, "", HttpMethod.Get, pageSize, token))
+        yield return item;
+    }
+
+    /// <summary>
+    /// Jql
+    /// </summary>
+    public static async IAsyncEnumerable<JsonDocument> Jql(this IJiraCommand command,
+                                                                string address,
+                                                                int pageSize) {
+      await foreach (var item in Jql(command, address, pageSize, CancellationToken.None))
+        yield return item;
+    }
+
+    /// <summary>
+    /// Jql
+    /// </summary>
+    public static async IAsyncEnumerable<JsonDocument> Jql(this IJiraCommand command,
+                                                                string address,
+                                                               [EnumeratorCancellation]
+                                                                CancellationToken token) {
+      await foreach (var item in Jql(command, address, -1, token))
+        yield return item;
+    }
+
+    /// <summary>
+    /// Jql
+    /// </summary>
+    public static async IAsyncEnumerable<JsonDocument> Jql(this IJiraCommand command,
+                                                                string address) {
+      await foreach (var item in Jql(command, address, -1, CancellationToken.None))
+        yield return item;
+    }
+
+    #endregion Jql
+
     #endregion Public
   }
 

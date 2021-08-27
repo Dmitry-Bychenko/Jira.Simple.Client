@@ -18,7 +18,11 @@ namespace Jira.Simple.Client.Rest {
   //
   //-------------------------------------------------------------------------------------------------------------------
 
-  public sealed class JiraRestConnection : IJiraConnection, IDisposable, IEquatable<JiraRestConnection> {
+  public sealed class JiraRestConnection 
+    : IJiraConnection, 
+      IDisposable, 
+      IEquatable<JiraRestConnection> {
+    
     #region Private Data
 
     private static readonly IReadOnlyDictionary<char, string> s_Escape = new Dictionary<char, string>() {
@@ -34,6 +38,8 @@ namespace Jira.Simple.Client.Rest {
     private CookieContainer m_CookieContainer;
 
     private HttpClient m_HttpClient;
+
+    private readonly SemaphoreSlim m_Locker;
 
     #endregion Private Data
 
@@ -113,6 +119,8 @@ namespace Jira.Simple.Client.Rest {
       Password = password ?? throw new ArgumentNullException(nameof(password));
       Server = server?.TrimEnd(' ', '/') ?? throw new ArgumentNullException(nameof(server));
 
+      m_Locker = new SemaphoreSlim(0);
+
       CoreCreateClient();
     }
 
@@ -183,20 +191,35 @@ namespace Jira.Simple.Client.Rest {
       if (IsConnected)
         return;
 
-      await CoreConnectAsync(token).ConfigureAwait(false);
+      await m_Locker.WaitAsync(token);
 
-      IsConnected = true;
+      try {
+        if (IsDisposed)
+          throw new ObjectDisposedException("this");
+
+        if (!IsConnected)
+          await CoreConnectAsync(token).ConfigureAwait(false);
+
+        IsConnected = true;
+      }
+      finally {
+        m_Locker.Release();
+      }
     }
 
     /// <summary>
     /// Create Command
     /// </summary>
-    public JiraRestCommand Command() => new(this);
+    public JiraRestCommand Command() => IsDisposed 
+      ? throw new ObjectDisposedException("this")
+      : new(this);
 
     /// <summary>
     /// Create Command
     /// </summary>
-    IJiraCommand IJiraConnection.Command() => new JiraRestCommand(this);
+    IJiraCommand IJiraConnection.Command() => IsDisposed 
+      ? throw new ObjectDisposedException("this")
+      : new JiraRestCommand(this);
 
     /// <summary>
     /// To String
@@ -218,10 +241,19 @@ namespace Jira.Simple.Client.Rest {
         return;
 
       if (disposing) {
-        m_HttpClient.Dispose();
+        m_Locker.Wait();
 
-        IsConnected = false;
-        IsDisposed = true;
+        try {
+          IsConnected = false;
+          IsDisposed = true;
+
+          m_HttpClient.Dispose();
+        }
+        finally {
+          m_Locker.Release();
+        }
+
+        m_Locker.Dispose();
       }
     }
 
