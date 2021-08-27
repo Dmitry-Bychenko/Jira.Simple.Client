@@ -91,6 +91,9 @@ namespace Jira.Simple.Client {
 
     #region Paged Query
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
@@ -104,6 +107,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
@@ -116,6 +122,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
@@ -127,6 +136,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
@@ -148,6 +160,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
@@ -168,6 +183,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query,
@@ -187,6 +205,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             string query) {
@@ -205,6 +226,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             int pageSize,
@@ -217,6 +241,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                            [EnumeratorCancellation]
@@ -228,6 +255,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address,
                                                                             int pageSize) {
@@ -238,6 +268,9 @@ namespace Jira.Simple.Client {
         yield return item;
     }
 
+    /// <summary>
+    /// Query, Paged Version
+    /// </summary>
     public static async IAsyncEnumerable<JsonDocument> QueryPagedAsync(this IJiraCommand command,
                                                                             string address) {
       if (command is null)
@@ -252,7 +285,7 @@ namespace Jira.Simple.Client {
     #region Jql
 
     /// <summary>
-    /// Jql
+    /// Jql (Jira Query Language)
     /// </summary>
     public static async Task<JsonDocument> Jql(this IJiraCommand command,
                                                                 string address,
@@ -269,14 +302,14 @@ namespace Jira.Simple.Client {
     }
 
     /// <summary>
-    /// Jql
+    /// Jql (Jira Query Language)
     /// </summary>
     public static async Task<JsonDocument> Jql(this IJiraCommand command,
                                                                 string address) =>
       await Jql(command, address, CancellationToken.None).ConfigureAwait(false);
 
     /// <summary>
-    /// Jql
+    /// Jql (Jira Query Language), paged version
     /// </summary>
     public static async IAsyncEnumerable<JsonDocument> JqlPaged(this IJiraCommand command,
                                                                      string address,
@@ -296,7 +329,7 @@ namespace Jira.Simple.Client {
     }
 
     /// <summary>
-    /// Jql
+    /// Jql (Jira Query Language), paged version
     /// </summary>
     public static async IAsyncEnumerable<JsonDocument> JqlPaged(this IJiraCommand command,
                                                                      string address,
@@ -306,7 +339,7 @@ namespace Jira.Simple.Client {
     }
 
     /// <summary>
-    /// Jql
+    /// Jql (Jira Query Language), paged version
     /// </summary>
     public static async IAsyncEnumerable<JsonDocument> JqlPaged(this IJiraCommand command,
                                                                      string address,
@@ -317,7 +350,7 @@ namespace Jira.Simple.Client {
     }
 
     /// <summary>
-    /// Jql
+    /// Jql (Jira Query Language), paged version
     /// </summary>
     public static async IAsyncEnumerable<JsonDocument> JqlPaged(this IJiraCommand command,
                                                                      string address) {

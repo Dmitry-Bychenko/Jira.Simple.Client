@@ -10,7 +10,8 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</PackageProjectUrl>
-    <PackageReleaseNotes>Simple Jira (Rest) Client</PackageReleaseNotes>
+    <PackageReleaseNotes>Jql
+Thread Safety</PackageReleaseNotes>
     <PackageIcon>Jira.Simple.Client.png</PackageIcon>
     <PackageIconUrl />
     <Authors>Dmitry Bychenko</Authors>
@@ -21,6 +22,10 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants />
   </PropertyGroup>
 
   <ItemGroup>
