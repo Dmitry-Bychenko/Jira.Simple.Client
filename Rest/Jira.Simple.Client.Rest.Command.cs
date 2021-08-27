@@ -20,38 +20,8 @@ namespace Jira.Simple.Client.Rest {
   //
   //-------------------------------------------------------------------------------------------------------------------
 
-  public sealed class JiraRestCommand : IJiraCommand {
-    #region Constants
-
-    public const int DEFAULT_PAGE_SIZE = 500;
-
-    #endregion Constants
-
-    #region Create
-
-    /// <summary>
-    /// Standard Constructor
-    /// </summary>
-    public JiraRestCommand(JiraRestConnection connection) {
-      Connection =
-          connection is null ? throw new ArgumentNullException(nameof(connection))
-        : connection.IsDisposed ? throw new ObjectDisposedException(nameof(connection))
-        : connection;
-    }
-
-    #endregion Create
-
-    #region Public
-
-    /// <summary>
-    /// Connection
-    /// </summary>
-    public JiraRestConnection Connection { get; }
-
-    /// <summary>
-    /// Connection
-    /// </summary>
-    IJiraConnection IJiraCommand.Connection => Connection;
+  public sealed class JiraRestCommand : JiraCommand<JiraRestConnection> {
+    #region Algorithm
 
     /// <summary>
     /// Query
@@ -61,19 +31,8 @@ namespace Jira.Simple.Client.Rest {
     /// <param name="method">Http Method</param>
     /// <param name="token">Cancellation Token</param>
     /// <returns>Answer Root Element (JSON)</returns>
-    public async Task<JsonDocument> QueryAsync(string address, string query, HttpMethod method, CancellationToken token) {
-      if (string.IsNullOrEmpty(address))
-        throw new ArgumentNullException(nameof(address));
-
-      if (Connection.IsDisposed)
-        throw new ObjectDisposedException(nameof(Connection));
-
-      if (!Connection.IsConnected)
-        await Connection.ConnectAsync().ConfigureAwait(false);
-
+    protected override async Task<JsonDocument> CoreQueryAsync(string address, string query, HttpMethod method, CancellationToken token) {
       address = string.Join("/", Connection.Server, "rest/api/latest", address.TrimStart('/'));
-
-      query ??= "{}";
 
       using var req = new HttpRequestMessage {
         Method = method,
@@ -97,11 +56,9 @@ namespace Jira.Simple.Client.Rest {
         .ReadAsStreamAsync(token)
         .ConfigureAwait(false);
 
-      var document = await JsonDocument
+      return await JsonDocument
         .ParseAsync(stream, default, token)
         .ConfigureAwait(false);
-
-      return document;
     }
 
     /// <summary>
@@ -113,28 +70,16 @@ namespace Jira.Simple.Client.Rest {
     /// <param name="pageSize"></param>
     /// <param name="token"></param>
     /// <returns></returns>
-    public async IAsyncEnumerable<JsonDocument> QueryPagedAsync(string address,
-                                                                string query,
-                                                                HttpMethod method,
-                                                                int pageSize,
-                                                               [EnumeratorCancellation]
-                                                                CancellationToken token) {
-      if (string.IsNullOrEmpty(address))
-        throw new ArgumentNullException(nameof(address));
-
-      if (Connection.IsDisposed)
-        throw new ObjectDisposedException(nameof(Connection));
-
-      if (!Connection.IsConnected)
-        await Connection.ConnectAsync().ConfigureAwait(false);
-
-      pageSize = pageSize <= 0 ? DEFAULT_PAGE_SIZE : pageSize;
-
+    protected override async IAsyncEnumerable<JsonDocument> CoreQueryPagedAsync(string address,
+                                                                                string query,
+                                                                                HttpMethod method,
+                                                                                int pageSize,
+                                                                               [EnumeratorCancellation]
+                                                                                CancellationToken token) {
       address = string.Join("/", Connection.Server, "rest/api/latest", address.TrimStart('/'));
 
       address += $"{(address.Contains('?') ? '&' : '?')}&maxResults={pageSize}";
 
-      query ??= "{}";
       int startAt = 0;
 
       while (startAt >= 0) {
@@ -187,7 +132,17 @@ namespace Jira.Simple.Client.Rest {
       }
     }
 
-    #endregion Public
+    #endregion Algorithm
+
+    #region Create
+
+    /// <summary>
+    /// Standard Constructor
+    /// </summary>
+    public JiraRestCommand(JiraRestConnection connection)
+      : base(connection) { }
+
+    #endregion Create
   }
 
 }

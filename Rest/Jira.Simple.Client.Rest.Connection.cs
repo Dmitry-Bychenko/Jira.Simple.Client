@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Net;
 using System.Net.Http;
@@ -18,69 +17,13 @@ namespace Jira.Simple.Client.Rest {
   //
   //-------------------------------------------------------------------------------------------------------------------
 
-  public sealed class JiraRestConnection 
-    : IJiraConnection, 
-      IDisposable, 
-      IEquatable<JiraRestConnection> {
-    
-    #region Private Data
-
-    private static readonly IReadOnlyDictionary<char, string> s_Escape = new Dictionary<char, string>() {
-      { '\\', "\\\\" },
-      { '"', "\\\"" },
-      { '\n', "\\n" },
-      { '\r', "\\r" },
-      { '\t', "\\t" },
-      { '\f', "\\f" },
-      { '\b', "\\b" },
-    };
-
-    private CookieContainer m_CookieContainer;
-
-    private HttpClient m_HttpClient;
-
-    private readonly SemaphoreSlim m_Locker;
-
-    #endregion Private Data
-
+  public sealed class JiraRestConnection : JiraConnection, IEquatable<JiraRestConnection> {
     #region Algorithm
 
-    private static string Escape(string value) {
-      if (value is null)
-        return "null";
-
-      StringBuilder sb = new(value.Length * 2);
-
-      foreach (char c in value)
-        sb.Append(s_Escape.TryGetValue(c, out var s) ? s : c);
-
-      return sb.ToString();
-    }
-
-    private void CoreCreateClient() {
-      try {
-        ServicePointManager.SecurityProtocol =
-          SecurityProtocolType.Tls |
-          SecurityProtocolType.Tls11 |
-          SecurityProtocolType.Tls12;
-      }
-      catch (NotSupportedException) {
-        ;
-      }
-
-      m_CookieContainer = new CookieContainer();
-
-      var handler = new HttpClientHandler() {
-        CookieContainer = m_CookieContainer,
-        Credentials = CredentialCache.DefaultCredentials,
-      };
-
-      m_HttpClient = new HttpClient(handler) {
-        Timeout = Timeout.InfiniteTimeSpan,
-      };
-    }
-
-    private async Task CoreConnectAsync(CancellationToken token) {
+    /// <summary>
+    /// Connect Async
+    /// </summary>
+    protected override async Task CoreConnectAsync(CancellationToken token) {
       string query =
          @$"{{
              ""username"": ""{Escape(Login)}"",
@@ -96,7 +39,7 @@ namespace Jira.Simple.Client.Rest {
         Content = new StringContent(query, Encoding.UTF8, "application/json")
       };
 
-      var response = await m_HttpClient
+      var response = await Client
         .SendAsync(req, HttpCompletionOption.ResponseHeadersRead, token)
         .ConfigureAwait(false);
 
@@ -113,40 +56,13 @@ namespace Jira.Simple.Client.Rest {
     /// </summary>
     /// <param name="login">Login</param>
     /// <param name="password">Password</param>
-    /// <param name="server">Server, e.g. https://jira-my-server.com</param>
-    public JiraRestConnection(string login, string password, string server) {
-      Login = login ?? throw new ArgumentNullException(nameof(login));
-      Password = password ?? throw new ArgumentNullException(nameof(password));
-      Server = server?.TrimEnd(' ', '/') ?? throw new ArgumentNullException(nameof(server));
-
-      m_Locker = new SemaphoreSlim(1);
-
-      CoreCreateClient();
-    }
+    /// <param name="server">Server</param>
+    public JiraRestConnection(string login, string password, string server)
+      : base(login, password, server) { }
 
     #endregion Create
 
     #region Public
-
-    /// <summary>
-    /// Http Client
-    /// </summary>
-    public HttpClient Client => m_HttpClient;
-
-    /// <summary>
-    /// Login
-    /// </summary>
-    public string Login { get; }
-
-    /// <summary>
-    /// Password
-    /// </summary>
-    public string Password { get; }
-
-    /// <summary>
-    /// Server
-    /// </summary>
-    public string Server { get; }
 
     /// <summary>
     /// Session Id
@@ -156,7 +72,7 @@ namespace Jira.Simple.Client.Rest {
         if (!IsConnected || IsDisposed)
           return null;
 
-        var cookies = m_CookieContainer.GetCookies(new Uri(Server));
+        var cookies = CookieContainer.GetCookies(new Uri(Server));
 
         return cookies["JSessionID"]?.Value;
       }
@@ -170,99 +86,20 @@ namespace Jira.Simple.Client.Rest {
         if (!IsConnected || IsDisposed)
           return null;
 
-        var cookies = m_CookieContainer.GetCookies(new Uri(Server));
+        var cookies = CookieContainer.GetCookies(new Uri(Server));
 
         return cookies["atlassian.xsrf.token"]?.Value;
       }
     }
 
     /// <summary>
-    /// Is Connected
-    /// </summary>
-    public bool IsConnected { get; private set; }
-
-    /// <summary>
-    /// Connect Async
-    /// </summary>
-    public async Task ConnectAsync(CancellationToken token) {
-      if (IsDisposed)
-        throw new ObjectDisposedException("this");
-
-      if (IsConnected)
-        return;
-
-      await m_Locker.WaitAsync(token).ConfigureAwait(false);
-
-      try {
-        if (IsDisposed)
-          throw new ObjectDisposedException("this");
-
-        if (!IsConnected)
-          await CoreConnectAsync(token).ConfigureAwait(false);
-
-        IsConnected = true;
-      }
-      finally {
-        m_Locker.Release();
-      }
-    }
-
-    /// <summary>
     /// Create Command
     /// </summary>
-    public JiraRestCommand Command() => IsDisposed 
+    public override JiraRestCommand Command() => IsDisposed
       ? throw new ObjectDisposedException("this")
       : new(this);
 
-    /// <summary>
-    /// Create Command
-    /// </summary>
-    IJiraCommand IJiraConnection.Command() => IsDisposed 
-      ? throw new ObjectDisposedException("this")
-      : new JiraRestCommand(this);
-
-    /// <summary>
-    /// To String
-    /// </summary>
-    public override string ToString() => $"{Login}@{Server}{(IsConnected ? " (connected)" : "")}";
-
     #endregion Public
-
-    #region IDisposable
-
-    /// <summary>
-    /// Is Disposed
-    /// </summary>
-    public bool IsDisposed { get; private set; }
-
-    // Dispose
-    private void Dispose(bool disposing) {
-      if (IsDisposed)
-        return;
-
-      if (disposing) {
-        m_Locker.Wait();
-
-        try {
-          IsConnected = false;
-          IsDisposed = true;
-
-          m_HttpClient.Dispose();
-        }
-        finally {
-          m_Locker.Release();
-        }
-
-        m_Locker.Dispose();
-      }
-    }
-
-    /// <summary>
-    /// Dispose
-    /// </summary>
-    public void Dispose() => Dispose(true);
-
-    #endregion IDisposable
 
     #region IEquatable<JiraRestConnection>
 

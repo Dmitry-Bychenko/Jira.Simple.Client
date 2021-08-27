@@ -34,19 +34,19 @@ namespace Jira.Simple.Client.Json {
 
       JsonElement result = parent;
 
-      foreach (string name in childrenNames) 
+      foreach (string name in childrenNames)
         if (result.ValueKind == JsonValueKind.Object) {
           if (!result.TryGetProperty(name, out result))
             return NullElement;
         }
-        else if (result.ValueKind == JsonValueKind.Array) 
+        else if (result.ValueKind == JsonValueKind.Array)
           if (int.TryParse(name, out int index) && index >= 0 && index < result.GetArrayLength())
             result = result[index];
           else
             return NullElement;
         else
           return NullElement;
-      
+
       return result;
     }
 
