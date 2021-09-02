@@ -10,14 +10,13 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</PackageProjectUrl>
-    <PackageReleaseNotes>Jql
-Thread Safety</PackageReleaseNotes>
+    <PackageReleaseNotes>Connection String support</PackageReleaseNotes>
     <PackageIcon>Jira.Simple.Client.png</PackageIcon>
     <PackageIconUrl />
     <Authors>Dmitry Bychenko</Authors>
     <Company />
     <PackageTags>Jira</PackageTags>
-    <Version>1.0.0.2</Version>
+    <Version>1.0.0.3</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

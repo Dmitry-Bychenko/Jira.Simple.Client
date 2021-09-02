@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -103,6 +104,34 @@ namespace Jira.Simple.Client {
       m_Locker = new SemaphoreSlim(1);
 
       CoreCreateClient();
+    }
+
+    // Data Source=http address;User ID=myUsername;password=myPassword;
+    /// <summary>
+    /// Standard Constructor
+    /// </summary>
+    /// <param name="connectionString">Connection String</param>
+    public JiraConnection(string connectionString) {
+      if (connectionString is null)
+        throw new ArgumentNullException(nameof(connectionString));
+
+      DbConnectionStringBuilder builder = new() {
+        ConnectionString = connectionString
+      };
+
+      if (builder.TryGetValue("User ID", out var login) &&
+          builder.TryGetValue("password", out var password) &&
+          builder.TryGetValue("Data Source", out var server)) {
+        Login = login?.ToString() ?? throw new ArgumentException("Login not found", nameof(connectionString));
+        Password = password?.ToString() ?? throw new ArgumentException("Password not found", nameof(connectionString));
+        Server = server?.ToString()?.Trim()?.TrimEnd('/') ?? throw new ArgumentException("Server not found", nameof(connectionString));
+
+        m_Locker = new SemaphoreSlim(1);
+
+        CoreCreateClient();
+      }
+      else
+        throw new ArgumentException("Invalid connection string", nameof(connectionString));
     }
 
     #endregion Create

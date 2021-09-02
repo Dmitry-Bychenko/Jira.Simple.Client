@@ -288,8 +288,8 @@ namespace Jira.Simple.Client {
     /// Jql (Jira Query Language)
     /// </summary>
     public static async Task<JsonDocument> Jql(this IJiraCommand command,
-                                                                string address,
-                                                                CancellationToken token) {
+                                                                 string address,
+                                                                 CancellationToken token) {
       if (command is null)
         throw new ArgumentNullException(nameof(command));
 
