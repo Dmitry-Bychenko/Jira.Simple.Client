@@ -58,7 +58,7 @@ namespace Jira.Simple.Client.Rest {
     /// <returns>Answer Root Element (JSON)</returns>
     protected override async Task<JsonDocument> CoreQueryAsync(string address, string query, HttpMethod method, CancellationToken token) {
       address = MakeAddress(address);
-            
+
       using var req = new HttpRequestMessage {
         Method = method,
         RequestUri = new Uri(address),
