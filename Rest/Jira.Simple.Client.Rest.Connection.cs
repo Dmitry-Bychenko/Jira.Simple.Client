@@ -60,6 +60,13 @@ namespace Jira.Simple.Client.Rest {
     public JiraRestConnection(string login, string password, string server)
       : base(login, password, server) { }
 
+    /// <summary>
+    /// Standard Constructor
+    /// </summary>
+    /// <param name="connectionString">Connection String</param>
+    public JiraRestConnection(string connectionString)
+      : base(connectionString) { }
+
     #endregion Create
 
     #region Public

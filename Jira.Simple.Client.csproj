@@ -16,7 +16,7 @@
     <Authors>Dmitry Bychenko</Authors>
     <Company />
     <PackageTags>Jira</PackageTags>
-    <Version>1.0.0.3</Version>
+    <Version>1.0.0.4</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
