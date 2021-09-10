@@ -134,25 +134,18 @@ namespace Jira.Simple.Client.Rest {
           .ParseAsync(stream, default, token)
           .ConfigureAwait(false);
 
-        if (jsonDocument.RootElement.TryGetProperty("startAt", out var startAtItem)) {
-          using var en = jsonDocument.RootElement.EnumerateObject();
+        if (jsonDocument is null)
+          yield break;
 
-          while (en.MoveNext()) {
-            if (en.Current.Value.ValueKind == JsonValueKind.Array) {
-              if (en.Current.Value.GetArrayLength() <= 0) {
-                yield break;
-              }
-            }
-          }
-
+        if (jsonDocument.RootElement.GetProperty("isLast").GetBoolean()) {
           yield return jsonDocument;
 
-          startAt += pageSize;
+          yield break;
         }
         else {
-          yield return jsonDocument;
+          startAt += jsonDocument.RootElement.GetProperty("maxResults").GetInt32();
 
-          startAt = 0;
+          yield return jsonDocument;
         }
       }
     }
