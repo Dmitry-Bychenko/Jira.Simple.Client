@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,6 +24,30 @@ namespace Jira.Simple.Client.Rest {
   public sealed class JiraRestCommand : JiraCommand<JiraRestConnection> {
     #region Algorithm
 
+    private string MakeAddress(string address) {
+      if (string.IsNullOrWhiteSpace(address))
+        return "";
+
+      address = address.Trim('/', ' ');
+
+      if (address.StartsWith("rest/", StringComparison.OrdinalIgnoreCase))
+        return string.Join("/", Connection.Server, address);
+      else {
+        var match = Regex.Match(address, @"^\s*([\p{L}0-9]*)\s*[;,:]+\s*");
+
+        if (match.Success) {
+          string api = match.Groups[1].Value;
+
+          if (string.IsNullOrWhiteSpace(api))
+            api = "api";
+
+          return string.Join("/", Connection.Server, $"rest/{api}/latest", address.Substring(match.Index + match.Length).Trim('/', ' '));
+        }
+        else
+          return string.Join("/", Connection.Server, "rest/api/latest", address);
+      }
+    }
+
     /// <summary>
     /// Query
     /// </summary>
@@ -32,8 +57,8 @@ namespace Jira.Simple.Client.Rest {
     /// <param name="token">Cancellation Token</param>
     /// <returns>Answer Root Element (JSON)</returns>
     protected override async Task<JsonDocument> CoreQueryAsync(string address, string query, HttpMethod method, CancellationToken token) {
-      address = string.Join("/", Connection.Server, "rest/api/latest", address.TrimStart('/'));
-
+      address = MakeAddress(address);
+            
       using var req = new HttpRequestMessage {
         Method = method,
         RequestUri = new Uri(address),
@@ -76,7 +101,7 @@ namespace Jira.Simple.Client.Rest {
                                                                                 int pageSize,
                                                                                [EnumeratorCancellation]
                                                                                 CancellationToken token) {
-      address = string.Join("/", Connection.Server, "rest/api/latest", address.TrimStart('/'));
+      address = MakeAddress(address);
 
       address += $"{(address.Contains('?') ? '&' : '?')}&maxResults={pageSize}";
 
