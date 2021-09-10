@@ -22,6 +22,12 @@ namespace Jira.Simple.Client.Rest {
   //-------------------------------------------------------------------------------------------------------------------
 
   public sealed class JiraRestCommand : JiraCommand<JiraRestConnection> {
+    #region Private Data
+
+    private static readonly Regex s_AddressRegex = new (@"^\s*([\p{L}0-9]*)\s*[;,:]+\s*", RegexOptions.Compiled);
+
+    #endregion Private Data
+
     #region Algorithm
 
     private string MakeAddress(string address) {
@@ -33,7 +39,7 @@ namespace Jira.Simple.Client.Rest {
       if (address.StartsWith("rest/", StringComparison.OrdinalIgnoreCase))
         return string.Join("/", Connection.Server, address);
       else {
-        var match = Regex.Match(address, @"^\s*([\p{L}0-9]*)\s*[;,:]+\s*");
+        var match = s_AddressRegex.Match(address);
 
         if (match.Success) {
           string api = match.Groups[1].Value;
@@ -41,7 +47,9 @@ namespace Jira.Simple.Client.Rest {
           if (string.IsNullOrWhiteSpace(api))
             api = "api";
 
+#pragma warning disable IDE0057 // Use range operator
           return string.Join("/", Connection.Server, $"rest/{api}/latest", address.Substring(match.Index + match.Length).Trim('/', ' '));
+#pragma warning restore IDE0057 // Use range operator
         }
         else
           return string.Join("/", Connection.Server, "rest/api/latest", address);

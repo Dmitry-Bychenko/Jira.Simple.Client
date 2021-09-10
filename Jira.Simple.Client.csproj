@@ -10,7 +10,8 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</PackageProjectUrl>
-    <PackageReleaseNotes>Connection String support</PackageReleaseNotes>
+    <PackageReleaseNotes>- Errors (pagination, connection string) Fixed
+- Queries like "agile : board" are now supported</PackageReleaseNotes>
     <PackageIcon>Jira.Simple.Client.png</PackageIcon>
     <PackageIconUrl />
     <Authors>Dmitry Bychenko</Authors>
