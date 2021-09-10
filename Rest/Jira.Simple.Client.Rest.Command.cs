@@ -137,15 +137,15 @@ namespace Jira.Simple.Client.Rest {
         if (jsonDocument is null)
           yield break;
 
-        if (jsonDocument.RootElement.GetProperty("isLast").GetBoolean()) {
-          yield return jsonDocument;
-
-          yield break;
-        }
-        else {
+        if (jsonDocument.RootElement.TryGetProperty("isLast", out var prop) && !prop.GetBoolean()) {
           startAt += jsonDocument.RootElement.GetProperty("maxResults").GetInt32();
 
           yield return jsonDocument;
+        }
+        else {
+          yield return jsonDocument;
+
+          yield break;
         }
       }
     }
