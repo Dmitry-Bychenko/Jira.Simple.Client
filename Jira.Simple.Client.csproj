@@ -10,14 +10,14 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Dmitry-Bychenko/Jira.Simple.Client</PackageProjectUrl>
-    <PackageReleaseNotes>- Errors (pagination, connection string) Fixed
-- Queries like "agile : board" are now supported</PackageReleaseNotes>
+    <PackageReleaseNotes>- Server Info
+</PackageReleaseNotes>
     <PackageIcon>Jira.Simple.Client.png</PackageIcon>
     <PackageIconUrl />
     <Authors>Dmitry Bychenko</Authors>
     <Company />
     <PackageTags>Jira</PackageTags>
-    <Version>1.0.0.4</Version>
+    <Version>1.0.0.5</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -47,9 +47,7 @@ namespace Jira.Simple.Client.Rest {
           if (string.IsNullOrWhiteSpace(api))
             api = "api";
 
-#pragma warning disable IDE0057 // Use range operator
-          return string.Join("/", Connection.Server, $"rest/{api}/latest", address.Substring(match.Index + match.Length).Trim('/', ' '));
-#pragma warning restore IDE0057 // Use range operator
+          return string.Join("/", Connection.Server, $"rest/{api}/latest", address[(match.Index + match.Length)..].Trim('/', ' '));
         }
         else
           return string.Join("/", Connection.Server, "rest/api/latest", address);
