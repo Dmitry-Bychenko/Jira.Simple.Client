@@ -1,5 +1,7 @@
 # Jira.Simple.Client
 
+[![NuGet version (Jira.Simple.Client)](https://img.shields.io/nuget/v/Jira.Simple.Client.svg?style=flat-square)](https://www.nuget.org/packages/Jira.Simple.Client/)
+
 Typical usage:
 
 ```c#
